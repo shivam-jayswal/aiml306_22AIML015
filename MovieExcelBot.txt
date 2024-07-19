@@ -1,0 +1,64 @@
+This bot is designed to create a new CSV file named newmovies.csv that contains columns for id, title, and ratings for each movie. The bot extracts data from two existing CSV files (movies_metadata.csv and ratings_new.csv) and combines them using a database connection and data table operations.
+
+Steps to Create the Bot
+1. String Assign Action
+Action: String Assign
+Variable: FolderPath
+Value: D:\movieexcelbot
+This action assigns the folder path where the CSV files are stored to the variable FolderPath.
+
+2. Database Connect Action for Movies Metadata
+Action: Database Connect
+Mode: Default Mode
+Connection String: "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=$FolderPath$; Extended Properties='text';"
+Session Name: file1
+This action establishes a connection to the CSV file movies_metadata.csv using a local session named file1.
+
+3. Database Export to Table Action for Movies Metadata
+Action: Database Export to Table
+Select Statement: SELECT id, original_title FROM movies_metadata.csv
+Session Name: file1
+Output Variable: datatable1
+This action runs an SQL select statement to retrieve the id and original_title columns from movies_metadata.csv and stores the result in the datatable1 variable.
+
+4. Database Connect Action for Ratings
+Action: Database Connect
+Mode: Default Mode
+Connection String: "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=$FolderPath$; Extended Properties='text';"
+Session Name: file2
+This action establishes a connection to the CSV file ratings_new.csv using a local session named file2.
+
+5. Database Export to Table Action for Ratings
+Action: Database Export to Table
+Select Statement: SELECT movieId, rating FROM ratings_new.csv
+Session Name: file2
+Output Variable: datatable2
+This action runs an SQL select statement to retrieve the movieId and rating columns from ratings_new.csv and stores the result in the datatable2 variable.
+
+6. Data Table Join Action
+Action: Data Table Join
+Data Table 1: datatable1
+Data Table 1 Column: id
+Data Table 2: datatable2
+Data Table 2 Column: movieId
+Join Type: Inner Join
+Output Variable: final_output
+This action performs an inner join between datatable1 and datatable2 based on the matching values of id from datatable1 and movieId from datatable2. The inner join ensures that only records with matching values in both tables are included in the final result. This is necessary to ensure that we only get ratings for movies that exist in the metadata file.
+
+7. Excel Open Action
+Action: Excel Open
+File Path: D:\newmovies.csv
+Mode: Desktop
+Session Name: Default
+This action opens a new or existing CSV file newmovies.csv in Excel using the default session.
+
+8. Excel Write to Data Table
+Action: Excel Write Data Table to File
+Data Table: final_output
+Sheet Name: Active Sheet
+Cell: A1
+Session Name: Default
+This action writes the data from final_output to the active sheet of the opened CSV file starting at cell A1.
+
+Explanation of Inner Join
+An inner join returns only the rows that have matching values in both tables. In this context, it ensures that only the movies that exist in the movies_metadata.csv file and have corresponding ratings in the ratings_new.csv file are included in the final output. This is important because it prevents the inclusion of movies without ratings or ratings for movies not listed in the metadata, ensuring the accuracy and relevance of the combined data in the newmovies.csv file.

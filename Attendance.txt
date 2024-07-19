@@ -1,0 +1,26 @@
+Step 1: Getting Attendance Data
+Browser open action: https://charusat.edu.in:912/eGovernance/
+Recorder capture action: captures username field and sets text as 22aiml015
+Recorder capture action: captures password field and sets text
+Recorder capture action: captures login button and performs click action
+Recorder capture action: captures "more" field from attendance section and displays full attendance table
+Recorder capture action: captures whole attendance data table and assigns the data to CapturedDataTable variable of DataTable type
+
+Step 2: Creating Excel File
+Excel advanced open action: D:\Tecnoprism\Bots\Week5\AttendenceEntryBot\Excels\AttendenceData.xlsx
+Excel advanced write from data table action: from CapturedDataTable from A1 cell
+Excel advanced close action
+
+Step 3: Sending Emails
+Email send action: to address is parents' email ID
+Subject: Student's Attendance Report
+Attachment: D:\Tecnoprism\Bots\Week5\AttendenceEntryBot\Excels\AttendenceData.xlsx
+
+Send email via:
+Email server: Outlook EWS Server
+From address: shivamjayswal2305@outlook.com
+Use secure connection (SSL/TLS): True
+Email server host: smtp.gmail.com
+Email server port: 587
+My server requires authentication: True
+Username: shivam.testmailing@gmail.com

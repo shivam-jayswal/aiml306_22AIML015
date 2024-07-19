@@ -1,0 +1,49 @@
+Step 1: Open Excel & Get Data
+Excel advanced open action: Path: D:\Tecnoprism\Bots\Week5\WorkAnniversaryBot\Excels\WorkAnniversary.xlsx, Session: default
+Get multiple cells action: Range: All rows, Assign to: ExcelData (DataTable variable)
+Excel close action
+
+Step 2: Get Data from Browser Table
+Browser open action: URL: https://botsdna.com/WorkAnniversary/
+Recorder capture: Capture the data table on the website, Assign to: CapturedData (DataTable variable)
+Browser close action
+Excel open action: Path: D:\Tecnoprism\Bots\Week5\WorkAnniversaryBot\Excels\CapturedData.xlsx, Session: File2
+Excel advanced write from data table: Write from: CapturedData, Start cell: A1, Session: File2
+Excel advanced get multiple cells action: Assign to: CapturedData
+Excel close action
+
+Step 3: Creating New Excel Sheet
+DataTable join action: Table 1: ExcelData, Column Name: Employee Id; Table 2: CapturedData, Column Name: Emplyee ID; Join Type: Inner Join; Assign to: JoinedDataTable (DataTable variable)
+Excel advanced open action: Path: D:\Tecnoprism\Bots\Week5\WorkAnniversaryBot\Excels\JoinedExcel.xlsx, Session: File3
+Excel advanced create worksheet action: Worksheet Name: JoinedData, Session: File3
+Excel advanced write from data table action: Write from: JoinedDataTable, Start cell: A1, Session: File3
+
+Step 4: Find Working Years of Employee
+Number assign action: Assign value: 2, Variable: counterday
+Date assign action: Assign system date to: date
+Date to string action: Format: d, Assign to: day_today
+Date to string action: Format: M, Assign to: month_today
+Date to string action: Format: yyyy, Assign to: year_current
+Excel advanced set cell action: Specific cell: G1, Value: Day Join
+Excel advanced set cell action: Specific cell: H1, Value: Month Join
+Excel advanced set cell action: Specific cell: I1, Value: Year Join
+Excel advanced set cell action: Specific cell: J1, Value: Working Years
+Loop action: For each row in worksheet, Assign current row value to: ExcelRow
+Excel advanced set cell formula action: Specific cell: G$counterday.Number:toString$, Formula: =day(F$counterday.Number:toString$)
+Excel advanced set cell formula action: Specific cell: H$counterday.Number:toString$, Formula: =month(F$counterday.Number:toString$)
+Excel advanced set cell formula action: Specific cell: I$counterday.Number:toString$, Formula: =year(F$counterday.Number:toString$)
+Excel advanced set cell formula action: Specific cell: J$counterday.Number:toString$, Formula: =($year_current$-I$counterday.Number:toString$)
+Number increment action: Increment counterday by 1 and assign to itself back
+
+Step 5: Checking Anniversary and Sending Emails
+Loop action: For each row in worksheet, Assign current row value to: ExcelRowLoop2
+Number to string action: Convert counterday to string, Assign to: counter_str
+If condition: String condition: $ExcelRowLoop2[6]$ equals $day_today$ and $ExcelRowLoop2[7]$ equals $month_today$
+Then send email action: To address: $ExcelRowLoop2[2]$, Subject: WorkAnniversary Email, Body: Customized with Wish and name variable from data table, Email server details: 
+- Email server: Outlook EWS Server
+- From address: shivam.testmailing@gmail.com
+- Use secure connection (SSL/TLS): True
+- Email server host: smtp.gmail.com
+- Email server port: 587
+- My server requires authentication: True
+- Username: shivam.testmailing@gmail.com
